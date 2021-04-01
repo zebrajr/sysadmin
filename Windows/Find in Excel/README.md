@@ -17,4 +17,4 @@ searchExcel.ps1 contains the method, so if needed, one can call the script to se
 ### ToDo
 
 ## Example Screenshot
-[Example Screenshot](https://github.com/zebrajr/sysadmin/blob/master/Windows/Find%20in%20Excel/findInExcel.png)
+![Example Screenshot](https://github.com/zebrajr/sysadmin/blob/master/Windows/Find%20in%20Excel/findInExcel.png)
