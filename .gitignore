@@ -1,3 +1,4 @@
 secrets.cfg
 Linux/nmap/output/*
 !Linux/nmap/output/placeholder
+hosts
