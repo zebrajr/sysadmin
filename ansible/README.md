@@ -1,18 +1,44 @@
-# Ansible
+# Table of Contents
+1. [S.T.A.R](#Situation)
+2. [File Description](#File-Description)
+3. [Useful Information](#Useful-Information)
 
-- ansible.cfg
+## S.T.A.R.
+### Situation
+Being able to deploy one (or multiple) servers with a constant and expectable configuration.
 
-- main.yml
+### Task
+Adopt Infrastructure as Code (IaC) with Ansible.
 
-- hosts.sample
+### Action
+#### Make a copy of the sample files
+```
+cp roles/base/vars/main.yml.sample roles/base/vars/main.yml
+cp hosts.sample hosts
+```
 
-- roles - base - tasks
+#### Edit the files with your configuration
+```
+nano roles/base/vars/main.yml
+nano hosts.yml
+```
 
-- roles - base - vars
+#### Run the playbook
+```
+sudo ansible-playbook main.yml0
+```
+
+### Result
+A completely predicable and ephemeral stack for an Infrastructure.
 
 
+## File Description
+
+[to be continued]
+
+## Useful Information
 #### Create password hash command
-Needed for ansible/roles/base/vars/main.yml.sample
+Needed for roles/base/vars/main.yml.sample
 ```
 mkpasswd --method=sha-512
 ```
