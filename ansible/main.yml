@@ -1,0 +1,11 @@
+- hosts: all
+  tags: base
+  become: true
+  roles:
+    - base
+
+- hosts: server
+  tags: server
+  become: true
+  roles:
+    - server

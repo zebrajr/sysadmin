@@ -1,0 +1,8 @@
+[all:vars]
+ansible_connection=ssh
+ansible_user=rootUser
+ansible_ssh_pass=superSecretPassword
+
+[server]
+10.10.10.1
+host.example.com

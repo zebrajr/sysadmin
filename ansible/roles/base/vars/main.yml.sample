@@ -1,0 +1,2 @@
+docker_user_passwd: yourHashedPassword
+docker_user_sshkey: yourSSHPublicKey

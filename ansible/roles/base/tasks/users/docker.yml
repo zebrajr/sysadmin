@@ -1,0 +1,40 @@
+- name: users | docker-user | create group
+  tags: groups,docker-user,users
+  group:
+    name: docker-user
+    state: present
+
+- name: users | docker-user | create user
+  tags: docker-user,sudo,users
+  user:
+    name: docker-user
+    group: docker-user
+    groups: adm,sudo
+    state: present
+    comment: "Docker User"
+    password: "{{ docker_user_passwd }}"
+    shell: /bin/bash
+
+
+- name: Create a directory if it does not exist
+  file:
+    path: /home/docker-user/.ssh
+    state: directory
+    mode: '0700'
+    owner: docker-user
+    group: docker-user
+
+- name: insert public ssh key for user docker-user
+  lineinfile:
+    path: /home/docker-user/.ssh/authorized_keys
+    line: "{{ docker_user_sshkey }}"
+    create: yes
+
+
+- name: fix authorized_keys permissions
+  file:
+    path: /home/docker-user/.ssh/authorized_keys
+    state: touch
+    mode: '0644'
+    owner: docker-user
+    group: docker-user
