@@ -9,7 +9,7 @@
   user:
     name: docker-user
     group: docker-user
-    groups: adm,sudo
+    groups: adm,sudo,docker
     state: present
     comment: "Docker User"
     password: "{{ docker_user_passwd }}"

@@ -1,6 +1,11 @@
 - block:
   # Install Software
 
+  # Software
+  - import_tasks: software/repositories.yml
+  - import_tasks: software/packages_development.yml
+  - import_tasks: software/packages_utilities.yml
+
 
   # Users
   - import_tasks: users/root.yml

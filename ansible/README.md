@@ -34,7 +34,15 @@ A completely predicable and ephemeral stack for an Infrastructure.
 
 ## File Description
 
-[to be continued]
+- ansible.cfg
+
+- main.yml
+
+- hosts.sample
+
+- roles - base - tasks
+
+- roles - base - vars
 
 ## Useful Information
 #### Create password hash command

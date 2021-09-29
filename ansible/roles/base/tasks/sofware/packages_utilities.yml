@@ -1,0 +1,12 @@
+- name: system setup | utilities | install utility packages
+  tags: packages,system,settings
+  package:
+    state: latest
+    name:
+      - curl
+      - neofetch
+      - wget
+      - whois
+      - htop
+      - tmux
+      - apt-transport-https

@@ -1,0 +1,7 @@
+- name: system setup | development packages | install packages
+  tags: dev,development,packages,python
+  package:
+    name:
+      - python3
+      - python3-pip
+    state: latest

@@ -1,0 +1,8 @@
+- name: system setup | development packages | install packages
+  tags: dev,development,packages,python
+  package:
+    name:
+      - git
+      - docker
+      - docker-compose
+    state: latest
