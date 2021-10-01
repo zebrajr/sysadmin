@@ -1,5 +1,4 @@
 - block:
-  # Install Software
 
   # Software
   - import_tasks: software/repositories.yml
@@ -11,3 +10,8 @@
   # Users
   - import_tasks: users/root.yml
   - import_tasks: users/docker.yml
+
+
+  # System
+  - import_tasks: systemSetup/clock.yml
+  - import_tasks: systemSetup/locale.yml
