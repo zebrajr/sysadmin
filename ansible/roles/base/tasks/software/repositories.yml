@@ -1,7 +1,7 @@
 - name: system setup | repositories | add sources.list for debian hosts
   tags: non-free,repositories
   copy:
-    src: distribution_packages/debian_sources.list
+    src: distro_source/debian_sources.list
     dest: /etc/apt/sources.list
     backup: yes
 
@@ -10,6 +10,6 @@
   tags: packages,system,settings
   package:
     name:
-      - aptitude
+      #- aptitude
       - software-properties-common
     state: latest

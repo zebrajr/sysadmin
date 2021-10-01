@@ -25,7 +25,7 @@ nano hosts.yml
 
 #### Run the playbook
 ```
-sudo ansible-playbook main.yml0
+sudo ansible-playbook main.yml
 ```
 
 ### Result
