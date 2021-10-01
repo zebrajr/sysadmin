@@ -1,0 +1,7 @@
+- name: system setup | Update & Upgrade
+  tags: dev,development,packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+    cache_valid_time: 3600
+    state: latest

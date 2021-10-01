@@ -3,6 +3,7 @@
 
   # Software
   - import_tasks: software/repositories.yml
+  - import_tasks: software/apt.yml
   - import_tasks: software/packages_development.yml
   - import_tasks: software/packages_utilities.yml
 
