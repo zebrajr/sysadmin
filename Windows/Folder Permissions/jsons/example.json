@@ -1,0 +1,55 @@
+[
+    {
+        "folderPath"            : "abc 1",
+        "readOnlyGroups"        : [
+                                    "acl_rosfs03_bsa_it_nl",
+                                    "acl_rosfs03_bsa_personal_nl"
+                                  ],
+        "writeGroups"           : [
+                                    "acl_rosfs03_bsa_it_ls",
+                                    "acl_rosfs03_bsa_personal_ls"
+                                  ],
+        "isProtected"           : true,
+        "preserveInheritance"   : false,
+        "replaceSub"            : true
+    },
+    {
+        "folderPath"            : "abc 2",
+        "readOnlyGroups"        : [
+                                    "acl_rosfs03_bsa_it_nl",
+                                    "acl_rosfs03_bsa_personal_nl"
+                                  ],
+        "writeGroups"           : [
+                                    "acl_rosfs03_bsa_it_ls",
+                                    "acl_rosfs03_bsa_personal_ls"
+                                  ],
+        "isProtected"           : true,
+        "preserveInheritance"   : false,
+        "replaceSub"            : true
+    },
+    {
+        "folderPath"            : "abc 1\\1",
+        "readOnlyGroups"        : [
+                                    "acl_rosfs03_bsa_it_nl",
+                                    "acl_rosfs03_bsa_personal_nl"
+                                  ],
+        "writeGroups"           : [
+                                    "acl_rosfs03_bsa_it_ls",
+                                    "acl_rosfs03_bsa_personal_ls"
+                                  ],
+        "isProtected"           : true,
+        "preserveInheritance"   : false,
+        "replaceSub"            : true
+    },
+    {
+        "folderPath"            : "def 3",
+        "readOnlyGroups"        : [
+                                    "acl_rosfs03_bsa_it_nl",
+                                    "acl_rosfs03_bsa_personal_nl"
+                                  ],
+        "writeGroups"           : [],
+        "isProtected"           : false,
+        "preserveInheritance"   : true,
+        "replaceSub"            : false
+    }
+]
