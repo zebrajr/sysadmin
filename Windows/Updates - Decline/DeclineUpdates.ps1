@@ -1,105 +1,86 @@
+Param(    
+    [Parameter(Mandatory=$false, 
+    ValueFromPipeline=$true, 
+    ValueFromPipelineByPropertyName=$true, 
+    ValueFromRemainingArguments=$false, 
+    Position=0)] 
+    [string]$wsus_name = "Localhost", #default to localhost
+    [int]$wsus_port=8530
+)
+
+
 <#
-.Synopsis
-   Sample script to decline superseded updates from WSUS, and run WSUS cleanup if any changes are made
+    Configuration
+#>
+$declined_updates_log_name = 'log_declined_updates.txt'
 
-.DESCRIPTION
-   Declines updates from WSUS if update meets any of the following:
-        - is superseded
-        - is expired (as defined by Microsoft)
-        - is for x86 or itanium operating systems
-        - is for Windows XP
-        - is a language pack
-        - is for old versions of Internet Explorer (versions 7,8,9)
-        - contains some country names for country specific updates not filtered by WSUS language filters.
-        - is a beta update
-        - is for an embedded operating system
 
-    If an update is released for multiple operating systems, and one or more of the above criteria are met, the versions of the update that do not meet the above will not be declined by this script
 
-.EXAMPLE
-   .\Decline-Updates -WSUSServer WSUSServer.Company.com -WSUSPort 8530
-
-# Last updated 13 July 2016
-
-# Author
-Nick Eales, Microsoft
-# Adapted
-Carlos Sousa
+<#
+    Setup
 #>
 
+$declined_updates_log_file = $PSScriptRoot + '\' + $declined_updates_log_name
 
-Param(
-    [Parameter(Mandatory=$false,
-    ValueFromPipeline=$true,
-    ValueFromPipelineByPropertyName=$true,
-    ValueFromRemainingArguments=$false,
-    Position=0)]
-    [string]$WSUSServer = "Localhost", #default to localhost
-    [int]$WSUSPort=8530,
-    [switch]$reportonly
+
+
+<#
+    Logger Functions
+#>
+Function LogWrite{
+    Param(
+        [string]$log_string
     )
+    $stamp = (Get-Date).toString("yyyy/MM/dd HH:mm:ss:ffff")
+    $output_string = "$stamp ::: $log_string"
+    Add-Content $declined_updates_log_file -value $output_string
+}
+
+
+
+<#
+    Main
+#>
 
 Function Decline-Updates{
     Param(
-        [string]$WsusServer,
-        [int]$WSUSPort,
-        [switch]$ReportOnly
+        [string]$wsus_name,
+        [int]$wsus_port
     )
-    write-host "Connecting to WSUS Server $WSUSServer and getting list of updates"
-    $Wsus = Get-WSUSserver -Name $WSUSServer -PortNumber $WSUSPort
-    if($WSUS -eq $Null){
-        write-error "unable to contact WSUSServer $WSUSServer"
-    }else{
-        $Updates = $wsus.GetUpdates()
-        write-host "$(($Updates | where {$_.IsDeclined -eq $false} | measure).Count) Updates before cleanup"
-        $updatesToDecline = $updates | where {$_.IsDeclined -eq $false -and (
-        $_.IsSuperseded -eq $true -or   #remove superseded updates
-        $_.PublicationState -eq "Expired" -or #remove updates that have been pulled by Microsoft
-        $_.LegacyName -match "ia64" -or #remove updates for itanium computers (1/2)
-        $_.LegacyName -match "x86" -or  #remove updates for 32-bit computers
-        $_.LegacyName -match "XP" -or   #remove Windows XP updates (1/2)
-        $_.producttitles -match "XP" -or #remove Windows XP updates (1/2)
-        $_.Title -match "Itanium" -or   #remove updates for itanium computers (2/2)
-        $_.title -match "Internet Explorer 7" -or #remove updates for old versions of IE
-        $_.title -match "Internet Explorer 8" -or
-        $_.title -match "Internet Explorer 9" -or
-        $_.title -match "ARM64" -or
-        $_.Title -match "Beta" -or     #Beta products and beta updates
-        $_.title -match "Embedded"     #Embedded version of Windows
-        )}
+    Write-Host "Connecting to $wsus_name via $wsus_port"
+    Write-Host "Logfile for declined updates: $declined_updates_log_file"
+    
+    
+    $wsusserver = Get-WsusServer -Name $wsus_name -PortNumber $wsus_port
+    $update_scope = New-Object -TypeName Microsoft.UpdateServices.Administration.UpdateScope
 
-        write-host "$(($updatesToDecline | measure).Count) Updates to decline"
-        $changemade = $false
-        if($reportonly){
-            write-host "ReportOnly was set to true, so not making any changes"
-        }else{
-            $changemade = $true
-            $updatesToDecline | %{$_.Decline()}
+    $update_scope.ApprovedStates = 'NotApproved'
+
+    $all_updates = $wsusserver.GetUpdates($update_scope)
+
+    $changes_made = $false
+    foreach($new_update in $all_updates){
+        $decline_update = $false
+        if ($new_update.IsBeta -eq $true){ $decline_update = $true }
+        if ($new_update.PublicationState -eq "Expired"){ $decline_update = $true }
+        if ($new_update.IsSuperseded -eq $true){ $decline_update = $true }
+        if ($new_update.Title -match "ARM64"){ $decline_update = $true }
+        if ($new_update.Title -match "x86"){$decline_update = $true }
+
+        if ($decline_update -eq $true){
+            LogWrite($new_update.Title)
+            Get-WsusUpdate -UpdateId $new_update.Id.UpdateId | Deny-WsusUpdate
+            $changes_made = $true
         }
+    
+    }
 
-        #Decline updates released more then 3 months prior to the release of an included service pack
-        # - service packs updates don't appear to contain the supersedance information.
-        Foreach($SP in $($updates | where title -match "^Windows Server \d{4} .* Service Pack \d")){
-            if(($SP.ProductTitles |measure ).count -eq 1){
-                $updatesToDecline = $updates | where {$_.IsDeclined -eq $false -and $_.ProductTitles -contains $SP.ProductTitles -and $_.CreationDate -lt $SP.CreationDate.Addmonths(-3)}
-                if($updatesToDecline -ne $null){
-                    write-host "$(($updatesToDecline | measure).Count) Updates to decline (superseded by $($SP.Title))"
-                    if(-not $reportonly){
-                        $changemade = $true
-                        $updatesToDecline | %{$_.Decline()}
-                    }
-                }
-            }
-        }
-
-        #if changes were made, run a WSUS cleanup to recover disk space
-        if($changemade -eq $true -and $reportonly -eq $false){
-            $Updates = $wsus.GetUpdates()
-            write-host "$(($Updates | where {$_.IsDeclined -eq $false} | measure).Count) Updates remaining, running WSUS cleanup"
-            Invoke-WsusServerCleanup -updateServer $WSUS -CleanupObsoleteComputers -CleanupUnneededContentFiles -CleanupObsoleteUpdates -CompressUpdates -DeclineExpiredUpdates -DeclineSupersededUpdates
-        }
-
+    # Invoke WSUS Server Cleanup
+    if ($changes_made -eq $true){
+        Write-Host "Changes were made, running cleanup"
+        $response_cleanup = Invoke-WsusServerCleanup -updateServer $wsusserver -CleanupObsoleteComputers -CleanupUnneededContentFiles -CleanupObsoleteUpdates -CompressUpdates -DeclineExpiredUpdates -DeclineSupersededUpdates
     }
 }
 
-Decline-Updates -WSUSServer $WSUSServer -WSUSPort $WSUSPort -reportonly:$reportonly
+
+Decline-Updates -wsus_name $wsus_name -wsus_port $wsus_port
