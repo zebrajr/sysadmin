@@ -9,7 +9,7 @@ Ps.: Feel free to improve :)
 ## Some Statistics
 <img src="https://img.shields.io/github/license/zebrajr/sysadmin?logo=github"><img src="https://img.shields.io/github/forks/zebrajr/sysadmin?logo=github"><img src="https://img.shields.io/github/stars/zebrajr/sysadmin?logo=github">
 <br>
-<img src="https://img.shields.io/github/last-commit/zebrajr/sysadmin?logo=gitfs"><img src="https://img.shields.io/maintenance/yes/2021">
+<img src="https://img.shields.io/github/last-commit/zebrajr/sysadmin?logo=gitfs"><img src="https://img.shields.io/maintenance/yes/2023">
 <br>
 <img src="https://img.shields.io/github/repo-size/zebrajr/sysadmin?logo=files"><img src="https://img.shields.io/tokei/lines/github/zebrajr/sysadmin?logo=files">
 <br>
